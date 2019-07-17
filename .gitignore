@@ -30,6 +30,8 @@
 *.exe
 *.out
 *.app
+speedogift-client
+speedogift-server
 
 # Editor
 .vscode/*

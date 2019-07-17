@@ -21,7 +21,6 @@ function check_deps {
         cd ${repo_name[1]}
         git fetch
         if [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
-            echo "hej"
             return 1
         fi
     done
