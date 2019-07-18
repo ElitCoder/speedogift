@@ -2,7 +2,7 @@ deps=(ElitCoder/ncconf)
 
 function pull {
     for i in ${deps[@]}; do
-        git clone https://github.com/$i
+        git clone --depth=1 https://github.com/$i
         repo_name=(${i//// })
         cd ${repo_name[1]}
         ./build.sh
