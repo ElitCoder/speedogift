@@ -5,8 +5,10 @@ SERVER_SRCS		:= $(wildcard server/src/*.cpp) $(wildcard shared/src/*.cpp)
 CLIENT_OBJS		:= $(CLIENT_SRCS:.cpp=.o)
 SERVER_OBJS		:= $(SERVER_SRCS:.cpp=.o)
 
-CXXFLAGS		+= -std=c++11 -Wall -Wextra -pedantic-errors
+CXXFLAGS		+= -std=c++14 -Wall -Wextra -pedantic-errors
 CXXFLAGS		+= -g
+
+LDLIBS			+= -l:libncnet.a -l:libncconf.a -fopenmp
 
 TARGET_CLIENT	:= client/bin/$(NAME)-client
 TARGET_SERVER	:= server/bin/$(NAME)-server
