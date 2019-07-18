@@ -7,6 +7,7 @@ SERVER_OBJS		:= $(SERVER_SRCS:.cpp=.o)
 
 CXXFLAGS		+= -std=c++14 -Wall -Wextra -pedantic-errors
 CXXFLAGS		+= -g
+CXXFLAGS		+= -Ishared/src
 
 LDLIBS			+= -l:libncnet.a -l:libncconf.a -fopenmp
 

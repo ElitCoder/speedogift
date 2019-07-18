@@ -1,3 +1,6 @@
+#include "APIAuth.h"
+#include "ProcessAPI.h"
+
 #include <ncnet/Client.h>
 #include <ncnet/Server.h>
 #include <ncconf/Log.h>
@@ -19,11 +22,20 @@ void run_server_thread(Server &server) {
         }
 
         // Process local information here
-        Log(DEBUG) << "Received some local information";
+        if (!ProcessAPI::process(info)) {
+            // Kick, something is wrong
+        }
     }
 }
 
 void run_monitor_client_thread(Client &client) {
+    // Auth
+    APIAuth auth;
+    auth.set_client_type(CLIENT_TYPE_MONITOR);
+    auth.set_client_name("test");
+    auth.finish();
+    auth.send(client);
+
     while (true) {
         auto info = client.get();
         if (g_stop_threads.load()) {
@@ -31,7 +43,10 @@ void run_monitor_client_thread(Client &client) {
         }
 
         // Information from server
-        Log(DEBUG) << "Received monitor information";
+        if (!ProcessAPI::process(info)) {
+            // Exit
+            break;
+        }
     }
 }
 
