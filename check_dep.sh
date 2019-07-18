@@ -41,7 +41,7 @@ orig=`pwd`
 
 if [ ! -d "dep" ]; then
     reset
-    exit 0
+    exit 1
 fi
 
 # Otherwise, check
@@ -49,5 +49,7 @@ check_deps
 if [[ $? != 0 ]]; then
     cd $orig
     reset
-    exit 0
+    exit 1
 fi
+
+exit 0
