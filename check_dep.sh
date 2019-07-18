@@ -1,4 +1,4 @@
-deps=(ElitCoder/ncconf)
+deps=(ElitCoder/ncconf ElitCoder/ncnet)
 
 function pull {
     for i in ${deps[@]}; do
@@ -16,13 +16,16 @@ function check_deps {
     for i in ${deps[@]}; do
         repo_name=(${i//// })
         if [ ! -d ${repo_name[1]} ]; then
+            echo "can't find repo dir ${repo_name[1]}, resetting"
             return 1
         fi
         cd ${repo_name[1]}
         git fetch
         if [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
+            echo "old version for ${repo_name[1]}, resetting"
             return 1
         fi
+        cd ..
     done
     return 0
 }
