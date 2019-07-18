@@ -1,55 +1,53 @@
 deps=(ElitCoder/ncconf ElitCoder/ncnet)
 
 function pull {
-    for i in ${deps[@]}; do
-        git clone --depth=1 https://github.com/$i
-        repo_name=(${i//// })
-        cd ${repo_name[1]}
-        ./build.sh
-        sudo make install
-        cd ..
-    done
+    local i=$1
+    git clone --depth=1 https://github.com/$i
+    repo_name=(${i//// })
+    cd ${repo_name[1]}
+    ./build.sh
+    sudo make install
+    cd ..
 }
 
 function check_deps {
+    local res=0
     cd dep
     for i in ${deps[@]}; do
         repo_name=(${i//// })
         if [ ! -d ${repo_name[1]} ]; then
             echo "can't find repo dir ${repo_name[1]}, resetting"
-            return 1
+            pull $i
+            res=1
+            continue
         fi
         cd ${repo_name[1]}
+        if [ ! -d .git ]; then
+            echo "not an git repository ${repo_name[1]}, resetting"
+            cd ..
+            rm -rf ${repo_name[1]}
+            pull $i
+            res=1
+            continue
+        fi
         git fetch
         if [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
             echo "old version for ${repo_name[1]}, resetting"
-            return 1
+            cd ..
+            rm -rf ${repo_name[1]}
+            pull $i
+            res=1
+            continue
         fi
         cd ..
     done
-    return 0
+    return $res
 }
-
-function reset {
-    rm -rf dep
-    mkdir dep
-    cd dep
-    pull
-}
-
-orig=`pwd`
 
 if [ ! -d "dep" ]; then
-    reset
-    exit 1
+    mkdir dep
 fi
 
 # Otherwise, check
 check_deps
-if [[ $? != 0 ]]; then
-    cd $orig
-    reset
-    exit 1
-fi
-
-exit 0
+exit $?
