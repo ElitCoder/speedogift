@@ -13,6 +13,4 @@ void APIAuth::set_client_name(const string &name) {
 void APIAuth::finish() {
     packet_.addHeader(HEADER_AUTH);
     packet_.addInt(type_);
-    //packet_.addString(name);
-    packet_.finalize();
 }

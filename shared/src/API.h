@@ -20,4 +20,5 @@ public:
 
 protected:
     Packet packet_; // Final packet
+    bool finished_ = false; // If the API has been packed before sending
 };

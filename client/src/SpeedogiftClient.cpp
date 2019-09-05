@@ -1,5 +1,4 @@
 #include "APIAuth.h"
-#include "ProcessAPI.h"
 
 #include <ncnet/Client.h>
 #include <ncnet/Server.h>
@@ -20,11 +19,6 @@ void run_server_thread(Server &server) {
         if (g_stop_threads.load()) {
             break;
         }
-
-        // Process local information here
-        if (!ProcessAPI::process(info)) {
-            // Kick, something is wrong
-        }
     }
 }
 
@@ -41,12 +35,6 @@ void run_monitor_client_thread(Client &client) {
         if (g_stop_threads.load()) {
             break;
         }
-
-        // Information from server
-        if (!ProcessAPI::process(info)) {
-            // Exit
-            break;
-        }
     }
 }
 
@@ -58,6 +46,9 @@ int get_random_port() {
 }
 
 int main(int argc, char *argv[]) {
+    (void)argc;
+    (void)argv;
+
     // Three things to do here
     // 1. Process possible parameters
     // 2. Start server thread for direct connections
@@ -76,6 +67,7 @@ int main(int argc, char *argv[]) {
     // Monitor mode
     Client monitor_client;
     while (!monitor_client.start("localhost", 12001)) {
+        Log(WARN) << "Could not connect, retrying in 1 second\n";
         // Sleep to not spam connection calls
         using namespace chrono_literals;
         this_thread::sleep_for(1s);
