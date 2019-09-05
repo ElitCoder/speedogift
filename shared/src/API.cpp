@@ -1,5 +1,7 @@
 #include "API.h"
 
+#include <ncnet/Network.h>
+
 void API::send(Network &network, size_t peer) {
     if (!finished_) {
         finish(); // Pack API call

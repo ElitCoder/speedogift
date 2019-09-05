@@ -1,4 +1,5 @@
 #include "APIAuth.h"
+#include "ProcessAPI.h"
 
 #include <ncnet/Client.h>
 #include <ncnet/Server.h>
@@ -27,7 +28,6 @@ void run_monitor_client_thread(Client &client) {
     APIAuth auth;
     auth.set_client_type(CLIENT_TYPE_MONITOR);
     auth.set_client_name("test");
-    auth.finish();
     auth.send(client);
 
     while (true) {

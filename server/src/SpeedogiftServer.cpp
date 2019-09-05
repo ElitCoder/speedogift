@@ -1,3 +1,6 @@
+#include "ProcessAPI.h"
+#include "ServerProcessor.h"
+
 #include <ncnet/Server.h>
 #include <ncconf/Log.h>
 
@@ -9,9 +12,14 @@ int main() {
     }
 
     // Enter waiting loop
+    ServerProcessor processor;
     while (true) {
         auto info = server.get();
         // Process data
+        auto disconnect = !ProcessAPI::match_api(info, processor);
+        if (disconnect) {
+            // TODO: Remove client
+        }
     }
 
     // Probably won't get here
