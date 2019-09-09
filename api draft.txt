@@ -1,0 +1,17 @@
+auth:
+name
+type
+api version?
+
+auth reply:
+ok/fuck you
+
+list:
+
+list reply:
+list of:
+	name
+	api version
+
+
+

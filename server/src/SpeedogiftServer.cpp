@@ -12,7 +12,7 @@ int main() {
     }
 
     // Enter waiting loop
-    ServerProcessor processor;
+    ServerProcessor processor(server);
     while (true) {
         auto info = server.get();
         // Process data
