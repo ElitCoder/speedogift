@@ -1,4 +1,3 @@
-#include "ProcessAPI.h"
 #include "ServerProcessor.h"
 
 #include <ncnet/Server.h>
@@ -16,7 +15,8 @@ int main() {
     while (true) {
         auto info = server.get();
         // Process data
-        auto disconnect = !ProcessAPI::match_api(info, processor);
+        // Disconnect if processing returns false
+        auto disconnect = !API::make_and_process(info, processor);
         if (disconnect) {
             // TODO: Remove client
         }
