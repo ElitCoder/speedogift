@@ -1,4 +1,4 @@
-deps=(jarro2783/cxxopts ElitCoder/ncconf ElitCoder/ncnet)
+deps=(jarro2783/cxxopts ElitCoder/ncconf ElitCoder/ncnet gabime/spdlog)
 
 function pull {
     local i=$1
@@ -9,7 +9,7 @@ function pull {
         echo "using cmake as backup"
         mkdir build
         cd build
-        cmake -G Ninja ..
+        cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja ..
         ninja
         sudo ninja install
     else
