@@ -1,12 +1,22 @@
-deps=(ElitCoder/ncconf ElitCoder/ncnet)
+deps=(jarro2783/cxxopts ElitCoder/ncconf ElitCoder/ncnet)
 
 function pull {
     local i=$1
     git clone --depth=1 https://github.com/$i
     repo_name=(${i//// })
     cd ${repo_name[1]}
-    ./build.sh
-    sudo make install
+    if [ ! -f build.sh ]; then
+        echo "using cmake as backup"
+        mkdir build
+        cd build
+        cmake -G Ninja ..
+        ninja
+        sudo ninja install
+        cd ..
+    else
+        ./build.sh
+        sudo make install
+    fi
     cd ..
 }
 
