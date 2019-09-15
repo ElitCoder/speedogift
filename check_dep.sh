@@ -1,4 +1,4 @@
-deps=(jarro2783/cxxopts ElitCoder/ncconf ElitCoder/ncnet gabime/spdlog)
+deps=(jarro2783/cxxopts ElitCoder/ncnet gabime/spdlog)
 
 function pull {
     local i=$1

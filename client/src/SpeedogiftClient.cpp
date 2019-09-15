@@ -1,94 +1,72 @@
-#include "APIAuth.h"
+#include "ClientProcessor.h"
 
+#include <cxxopts.hpp>
+#include <spdlog/spdlog.h>
 #include <ncnet/Client.h>
 #include <ncnet/Server.h>
-#include <ncconf/Log.h>
-
-#include <thread>
-#include <random>
-#include <chrono>
-#include <atomic>
 
 using namespace std;
 
-static atomic<bool> g_stop_threads;
+int main(int argc, char **argv) {
+    // Main things to do here
+    // 1. Process options
+    // 2. Setup local server for direct connections
+    // 3. Connect to server and run in monitor mode after processing options
 
-void run_server_thread(Server &server) {
-    while (true) {
-        auto info = server.get();
-        if (g_stop_threads.load()) {
-            break;
+    // So we can either be a monitor client (default), or connect using send-to options and then go into monitor mode
+    // Start of with processing options
+    cxxopts::Options options("speedogift_client", "Client part of Speedogift - sending files simple, safe and fast");
+    options.add_options()
+        ("h,hostname", "Specify server hostname", cxxopts::value<string>())
+        ("p,port", "Specify server port", cxxopts::value<int>())
+        ("n,no-monitor", "Quit after processing and don't go into monitor mode")
+        ("c,connect", "Connects to the client with the supplied name", cxxopts::value<string>())
+        ("s,send", "Sends a (list of) file(s) to specified receiver", cxxopts::value<vector<string>>())
+    ;
+
+    // Options
+    string hostname = "localhost";
+    int port = 12000;
+
+    try {
+        auto result = options.parse(argc, argv);
+
+        if (result.count("hostname") > 0) {
+            hostname = result["hostname"].as<string>();
         }
-    }
-}
-
-void run_monitor_client_thread(Client &client) {
-    // Auth
-    APIAuth auth;
-    auth.set_client_type(CLIENT_TYPE_MONITOR);
-    auth.set_client_name("test");
-    auth.send(client);
-
-    while (true) {
-        auto info = client.get();
-        if (g_stop_threads.load()) {
-            break;
+        if (result.count("port") > 0) {
+            port = result["port"].as<int>();
         }
-    }
-}
-
-int get_random_port() {
-    random_device device;
-    mt19937 mt(device());
-    uniform_int_distribution<int> dist(13000, 14000);
-    return dist(mt);
-}
-
-int main(int argc, char *argv[]) {
-    (void)argc;
-    (void)argv;
-
-    // Three things to do here
-    // 1. Process possible parameters
-    // 2. Start server thread for direct connections
-    // 3. Run in monitor mode
-
-    g_stop_threads.store(false);
-
-    // Start server thread
-    Server server;
-    while (!server.start("", get_random_port())) {
-        // Retry with different port
-    }
-    thread server_thread = thread(run_server_thread, ref(server));
-    Log(DEBUG) << "Started server thread at port " << server.at_port();
-
-    // Monitor mode
-    Client monitor_client;
-    while (!monitor_client.start("localhost", 12001)) {
-        Log(WARN) << "Could not connect, retrying in 1 second\n";
-        // Sleep to not spam connection calls
-        using namespace chrono_literals;
-        this_thread::sleep_for(1s);
-    }
-    thread monitor_client_thread = thread(run_monitor_client_thread, ref(monitor_client));
-    Log(DEBUG) << "Started client monitor thread";
-
-    // Finally process command arguments
-
-    // When we're done processing command arguments, keep monitor alive until
-    // there's a SIGABRT
-    while (true) {
-        using namespace chrono_literals;
-        this_thread::sleep_for(100ms);
+    } catch (...) {
+        // Failed, print help text
+        cout << options.help();
+        return -1;
     }
 
-    // Exiting
-    g_stop_threads.store(true);
-    server.stop();
-    monitor_client.stop();
-    server_thread.join();
-    monitor_client_thread.join();
+    // Client API processing
+    ClientProcessor processor;
+
+    // Connect to server
+    spdlog::info("Connecting to specified server ({}:{})", hostname, port);
+    Client client;
+    if (!client.start(hostname, port)) {
+        spdlog::critical("Could not connect to server, exiting");
+        return -1;
+    }
+
+    // Spawn of client thread
+    atomic<bool> stop_threads;
+    auto client_thread = thread([&client, &stop_threads] () {
+        while (true) {
+            auto info = client.get();
+            if (stop_threads.load()) {
+                break;
+            }
+        }
+    });
+
+    stop_threads.store(true);
+    client.stop();
 
     return 0;
 }

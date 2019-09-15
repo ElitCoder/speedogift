@@ -2,9 +2,11 @@
 ./check_dep.sh
 if [ $? -ne 0 ]; then
     # Clean and rebuild
-    make clean
+    rm -rf build
 fi
 
-# Build
-cores=`grep --count ^processor /proc/cpuinfo`
-make -j $cores
+# Build (Linux)
+mkdir -p build && cd build
+cmake -G Ninja ..
+ninja
+cd ..

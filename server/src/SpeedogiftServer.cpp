@@ -1,12 +1,12 @@
 #include "ServerProcessor.h"
 
 #include <ncnet/Server.h>
-#include <ncconf/Log.h>
+#include <spdlog/spdlog.h>
 
 int main() {
     Server server;
     if (!server.start("", 12001)) {
-        Log(ERR) << "Failed to start server, exiting";
+        spdlog::error("Failed to start server, exiting");
         return -1;
     }
 
