@@ -6,7 +6,7 @@ function pull {
     repo_name=(${i//// })
     cd ${repo_name[1]}
     if [ ! -f build.sh ]; then
-        echo "using cmake as backup"
+        echo "No build.sh script found, trying CMake instead..."
         mkdir build
         cd build
         cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja ..
@@ -23,13 +23,13 @@ function parse_dep {
     repo_name=$1
     url=$2
     if [ ! -d ${repo_name[1]} ]; then
-        echo "can't find repo dir ${repo_name[1]}, resetting"
+        echo "Dependency ${repo_name[1]} was not found, downloading..."
         pull $url
         return $?
     fi
     cd ${repo_name[1]}
     if [ ! -d .git ]; then
-        echo "not an git repository ${repo_name[1]}, resetting"
+        echo "Dependency ${repo_name[1]} exists but .git is missing, resetting..."
         cd ..
         rm -rf ${repo_name[1]}
         pull $url
@@ -37,7 +37,7 @@ function parse_dep {
     fi
     git fetch
     if [[ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]]; then
-        echo "old version for ${repo_name[1]}, resetting"
+        echo "Dependency ${repo_name[1]} has a newer HEAD, resetting..."
         cd ..
         rm -rf ${repo_name[1]}
         pull $url
