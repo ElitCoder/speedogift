@@ -13,8 +13,14 @@ using PeerAPIPair = std::pair<size_t, std::shared_ptr<API>>;
 enum Header {
     HEADER_AUTH = 0,
     HEADER_AUTH_REPLY,
+    HEADER_AUTH_CHANGE,
+    HEADER_AUTH_CHANGE_REPLY,
     HEADER_LIST,
-    HEADER_LIST_REPLY
+    HEADER_LIST_REPLY,
+    HEADER_SEND,
+    HEADER_SEND_REPLY,
+    HEADER_SEND_DATA,
+    HEADER_SEND_DATA_REPLY
 };
 
 enum ErrorCode {

@@ -4,7 +4,14 @@ Auth
 
 AuthReply
 	Status
-	Error code
+		Error code
+
+AuthChange
+	New mode
+
+AuthChangeReply
+	Status
+		Error code
 
 List
 
@@ -13,3 +20,26 @@ ListReply
 		API version
 		Name
 		Idle or active
+
+Send
+	Name
+	Number of files with metadata
+		Path
+		Name
+		Size
+		MD5/other hash
+
+SendReply
+	Status
+		ErrorCode
+	Direct connect
+		List of IPs
+
+SendData
+	Path
+	Name
+	Data size
+
+SendDataReply
+	Status
+		ErrorCode

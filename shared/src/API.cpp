@@ -1,8 +1,14 @@
 #include "API.h"
 #include "APIAuth.h"
 #include "APIAuthReply.h"
+#include "APIAuthChange.h"
+#include "APIAuthChangeReply.h"
 #include "APIList.h"
 #include "APIListReply.h"
+#include "APISend.h"
+#include "APISendReply.h"
+#include "APISendData.h"
+#include "APISendDataReply.h"
 
 #include <ncnet/Network.h>
 #include <spdlog/spdlog.h>
@@ -55,9 +61,21 @@ shared_ptr<API> API::make(Information &info) {
             break;
         case HEADER_AUTH_REPLY: api = make_shared<APIAuthReply>();
             break;
+        case HEADER_AUTH_CHANGE: api = make_shared<APIAuthChange>();
+            break;
+        case HEADER_AUTH_CHANGE_REPLY: api = make_shared<APIAuthChangeReply>();
+            break;
         case HEADER_LIST: api = make_shared<APIList>();
             break;
         case HEADER_LIST_REPLY: api = make_shared<APIListReply>();
+            break;
+        case HEADER_SEND: api = make_shared<APISend>();
+            break;
+        case HEADER_SEND_REPLY: api = make_shared<APISendReply>();
+            break;
+        case HEADER_SEND_DATA: api = make_shared<APISendData>();
+            break;
+        case HEADER_SEND_DATA_REPLY: api = make_shared<APISendDataReply>();
             break;
     }
 

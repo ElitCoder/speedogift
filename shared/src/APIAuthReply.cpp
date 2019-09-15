@@ -3,10 +3,14 @@
 
 void APIAuthReply::load(Packet &packet) {
     allowed_ = packet.getBool();
-    error_ = static_cast<ErrorCode>(packet.getInt());
+    if (!allowed_) {
+        error_ = static_cast<ErrorCode>(packet.getInt());
+    }
 }
 
 void APIAuthReply::finish() {
     packet_.addBool(allowed_);
-    packet_.addInt(error_);
+    if (!allowed_) {
+        packet_.addInt(error_);
+    }
 }
