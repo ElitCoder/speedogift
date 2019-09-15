@@ -7,13 +7,23 @@ class Processor;
 class Information;
 
 enum Header {
-    HEADER_AUTH,
+    HEADER_AUTH = 0,
     HEADER_AUTH_REPLY
 };
+
+enum ErrorCode {
+    NO_ERROR = 0,
+    OUTDATED_API_VERSION,
+    NAME_ALREADY_TAKEN
+};
+
+// API version
+const std::string API_VERSION = "0.0.1";
 
 class API {
 public:
     virtual void send(Network &network, size_t peer = 0) final;
+    virtual void send_and_wait_for_reply(Network &network, Processor &proc, API &reply, size_t peer = 0) final;
 
     // API factory from packet
     static std::shared_ptr<API> make(Information &info);

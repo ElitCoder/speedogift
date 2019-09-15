@@ -3,6 +3,7 @@
 
 void APIAuthReply::load(Packet &packet) {
     allowed_ = packet.getBool();
+    error_ = static_cast<ErrorCode>(packet.getInt());
 }
 
 bool APIAuthReply::process(Information &info, Processor &proc) {
@@ -10,6 +11,6 @@ bool APIAuthReply::process(Information &info, Processor &proc) {
 }
 
 void APIAuthReply::finish() {
-    packet_.addHeader(HEADER_AUTH_REPLY);
     packet_.addBool(allowed_);
+    packet_.addInt(error_);
 }

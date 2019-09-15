@@ -43,6 +43,9 @@ int main(int argc, char **argv) {
         return -1;
     }
 
+    // Set debug level during development
+    spdlog::set_level(spdlog::level::debug);
+
     // Connect to server
     spdlog::info("Connecting to specified server ({}:{})", hostname, port);
     Client client;

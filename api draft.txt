@@ -1,17 +1,15 @@
-auth:
-name
-type
-api version?
+Auth
+	API version
+	Name
 
-auth reply:
-ok/fuck you
+AuthReply
+	Status
+	Error code
 
-list:
+List
 
-list reply:
-list of:
-	name
-	api version
-
-
-
+ListReply
+	Number of clients with data
+		API version
+		Name
+		Idle or active

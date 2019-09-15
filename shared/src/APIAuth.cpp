@@ -4,6 +4,7 @@
 using namespace std;
 
 void APIAuth::load(Packet &packet) {
+    api_version_ = packet.getString();
     name_ = packet.getString();
 }
 
@@ -12,6 +13,6 @@ bool APIAuth::process(Information &info, Processor &proc) {
 }
 
 void APIAuth::finish() {
-    packet_.addHeader(HEADER_AUTH);
+    packet_.addString(API_VERSION);
     packet_.addString(name_);
 }

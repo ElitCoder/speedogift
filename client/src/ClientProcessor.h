@@ -15,8 +15,6 @@ public:
     void process_options(cxxopts::ParseResult &options);
 
 private:
-    void wait_for_api(API &api);
-
     Client &client_;
     int direct_port_;
 };
