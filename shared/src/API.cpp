@@ -1,6 +1,8 @@
 #include "API.h"
 #include "APIAuth.h"
 #include "APIAuthReply.h"
+#include "APIList.h"
+#include "APIListReply.h"
 
 #include <ncnet/Network.h>
 #include <spdlog/spdlog.h>
@@ -20,23 +22,27 @@ void API::send(Network &network, size_t peer) {
 }
 
 // This will probably only be a client function
-void API::send_and_wait_for_reply(Network &network, Processor &proc, API &reply, size_t peer) {
-    send(network, peer);
+PeerAPIPair API::wait_for_reply(Network &network, Processor &proc, API &type, size_t peer) {
     // Wait forever for response
     while (true) {
         auto info = network.get();
         auto api = make(info);
-        spdlog::debug("Got answer");
-        if (api->is_api(reply)) {
+        if (api->is_api(type) && info.getId() == peer) {
             // Replied
-            spdlog::debug("Matching API, returning");
-            reply = *api;
-            break;
+            return { info.getId(), api };
         } else {
-            spdlog::debug("Processing API generally..");
-            process(info, proc);
+            api->process(info, proc);
         }
     }
+}
+
+bool API::send_and_process_reply(Network &network, Processor &proc, API &reply, size_t peer) {
+    send(network, peer);
+    auto peer_reply = wait_for_reply(network, proc, reply, peer);
+    auto api_ref = peer_reply.second;
+    Information info;
+    info.setId(peer_reply.first);
+    return api_ref->process(info, proc);
 }
 
 shared_ptr<API> API::make(Information &info) {
@@ -49,6 +55,10 @@ shared_ptr<API> API::make(Information &info) {
             break;
         case HEADER_AUTH_REPLY: api = make_shared<APIAuthReply>();
             break;
+        case HEADER_LIST: api = make_shared<APIList>();
+            break;
+        case HEADER_LIST_REPLY: api = make_shared<APIListReply>();
+            break;
     }
 
     if (api == nullptr) {
@@ -60,15 +70,19 @@ shared_ptr<API> API::make(Information &info) {
     return api;
 }
 
-bool API::process(Information &info, Processor &proc, shared_ptr<API> api) {
+bool API::process_api(Information &info, Processor &proc, shared_ptr<API> api) {
+    if (api == nullptr) {
+        // Probably unknown API header, disconnect client
+        return false;
+    }
+
     return api->process(info, proc);
 }
 
 bool API::make_and_process(Information &info, Processor &proc) {
-    return process(info, proc, make(info));
+    return process_api(info, proc, make(info));
 }
 
 bool API::is_api(API &api) {
-    spdlog::debug("Mine {} theirs {}", header_, api.header_);
     return api.header_ == header_;
 }

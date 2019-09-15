@@ -14,6 +14,7 @@ public:
     ServerProcessor(Server &server) : server_(server) {}
 
     virtual bool handle_api_auth(Information &info, const APIAuth &api) override;
+    virtual bool handle_api_list(Information &info, const APIList &api) override;
 
 private:
     bool client_is_valid(const APIAuth &api);

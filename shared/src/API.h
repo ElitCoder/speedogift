@@ -6,9 +6,15 @@ class Network;
 class Processor;
 class Information;
 
+class API;
+
+using PeerAPIPair = std::pair<size_t, std::shared_ptr<API>>;
+
 enum Header {
     HEADER_AUTH = 0,
-    HEADER_AUTH_REPLY
+    HEADER_AUTH_REPLY,
+    HEADER_LIST,
+    HEADER_LIST_REPLY
 };
 
 enum ErrorCode {
@@ -23,11 +29,13 @@ const std::string API_VERSION = "0.0.1";
 class API {
 public:
     virtual void send(Network &network, size_t peer = 0) final;
-    virtual void send_and_wait_for_reply(Network &network, Processor &proc, API &reply, size_t peer = 0) final;
+    virtual PeerAPIPair wait_for_reply(Network &network, Processor &proc, API &type, size_t peer = 0) final;
+    // Send + wait + process
+    virtual bool send_and_process_reply(Network &network, Processor &proc, API &type, size_t peer = 0) final;
 
     // API factory from packet
     static std::shared_ptr<API> make(Information &info);
-    static bool process(Information &info, Processor &proc, std::shared_ptr<API> api);
+    static bool process_api(Information &info, Processor &proc, std::shared_ptr<API> api);
     static bool make_and_process(Information &info, Processor &proc);
 
     // API is of type

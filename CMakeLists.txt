@@ -16,7 +16,8 @@ set(SERVER_SRCS
 set(SHARED_SRCS
         shared/src/API.cpp
         shared/src/APIAuth.cpp
-        shared/src/APIAuthReply.cpp)
+        shared/src/APIAuthReply.cpp
+        shared/src/APIListReply.cpp)
 
 # Compiler options
 set(CMAKE_CXX_STANDARD 14)

@@ -22,9 +22,14 @@ int main(int argc, char **argv) {
         ("n,no-monitor", "Quit after processing and don't go into monitor mode")
         ("c,connect", "Connects to the client with the supplied name", cxxopts::value<string>())
         ("s,send", "Sends a (list of) file(s) to specified receiver", cxxopts::value<vector<string>>())
+        ("l,list", "List connected clients and status")
     ;
 
+    // Set debug level during development
+    spdlog::set_level(spdlog::level::debug);
+
     // Options
+    Client client;
     string hostname = "localhost";
     int port = 12000;
 
@@ -37,38 +42,36 @@ int main(int argc, char **argv) {
         if (result.count("port") > 0) {
             port = result["port"].as<int>();
         }
+
+        // Connect to server
+        spdlog::info("Connecting to specified server ({}:{})", hostname, port);
+        if (!client.start(hostname, port)) {
+            spdlog::critical("Could not connect to server, exiting");
+            return -1;
+        }
+
+        // Client API processing
+        ClientProcessor processor(client);
+
+        // Process options
+        if (!processor.process_options(result)) {
+            client.stop();
+            return -1;
+        }
+
+        // Continue unless no-monitor is set
+        if (result.count("no-monitor") == 0) {
+            while (true) {
+                auto info = client.get();
+            }
+        }
     } catch (...) {
         // Failed, print help text
         cout << options.help();
         return -1;
     }
 
-    // Set debug level during development
-    spdlog::set_level(spdlog::level::debug);
-
-    // Connect to server
-    spdlog::info("Connecting to specified server ({}:{})", hostname, port);
-    Client client;
-    if (!client.start(hostname, port)) {
-        spdlog::critical("Could not connect to server, exiting");
-        return -1;
-    }
-
-    // Client API processing
-    ClientProcessor processor(client);
-
-    // Process options
-    // Since we got here, we know that options.parse() is fine
-    auto parsed_options = options.parse(argc, argv);
-    processor.process_options(parsed_options);
-
-    // Continue unless no-monitor is set
-    if (parsed_options.count("no-monitor") == 0) {
-        while (true) {
-            auto info = client.get();
-        }
-    }
-
+    // Quit
     client.stop();
     return 0;
 }

@@ -2,6 +2,7 @@
 
 #include "API.h"
 #include "Boilerplate.h"
+#include "Processor.h"
 
 class APIAuthReply : public API {
 public:
@@ -11,7 +12,7 @@ public:
 
 private:
     virtual void load(Packet &packet) override;
-    virtual bool process(Information &info, Processor &proc) override;
+    virtual bool process(Information &info, Processor &proc) override { (void)info; return proc.handle_api_auth_reply(*this); }
     virtual void finish() override;
 
     bool allowed_;

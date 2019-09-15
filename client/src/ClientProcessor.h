@@ -12,7 +12,11 @@ class ClientProcessor : public Processor {
 public:
     ClientProcessor(Client &client) : client_(client) {}
     SET_GET_MACRO(direct_port, int)
-    void process_options(cxxopts::ParseResult &options);
+    bool process_options(cxxopts::ParseResult &options);
+
+    // Processor functionality
+    virtual bool handle_api_auth_reply(const APIAuthReply &reply) override;
+    virtual bool handle_api_list_reply(const APIListReply &reply) override;
 
 private:
     Client &client_;

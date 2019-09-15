@@ -2,6 +2,7 @@
 
 #include "API.h"
 #include "Boilerplate.h"
+#include "Processor.h"
 
 class APIAuth : public API {
 public:
@@ -12,7 +13,7 @@ public:
 
 private:
     virtual void load(Packet &packet) override;
-    virtual bool process(Information &info, Processor &proc) override;
+    virtual bool process(Information &info, Processor &proc) override { return proc.handle_api_auth(info, *this); }
     virtual void finish() override;
 
     std::string name_;
