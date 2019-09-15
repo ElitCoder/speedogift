@@ -29,6 +29,11 @@ enum ErrorCode {
     NAME_ALREADY_TAKEN
 };
 
+enum ClientMode {
+    CLIENT_PROCESSING = 0,
+    CLIENT_MONITOR
+};
+
 // API version
 const std::string API_VERSION = "0.0.1";
 

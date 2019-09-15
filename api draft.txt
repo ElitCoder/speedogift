@@ -38,7 +38,7 @@ SendReply
 SendData
 	Path
 	Name
-	Data size
+	Data
 
 SendDataReply
 	Status
