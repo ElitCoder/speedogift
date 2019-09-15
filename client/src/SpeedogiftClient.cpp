@@ -43,9 +43,6 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    // Client API processing
-    ClientProcessor processor;
-
     // Connect to server
     spdlog::info("Connecting to specified server ({}:{})", hostname, port);
     Client client;
@@ -54,19 +51,21 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    // Spawn of client thread
-    atomic<bool> stop_threads;
-    auto client_thread = thread([&client, &stop_threads] () {
+    // Client API processing
+    ClientProcessor processor(client);
+
+    // Process options
+    // Since we got here, we know that options.parse() is fine
+    auto parsed_options = options.parse(argc, argv);
+    processor.process_options(parsed_options);
+
+    // Continue unless no-monitor is set
+    if (parsed_options.count("no-monitor") == 0) {
         while (true) {
             auto info = client.get();
-            if (stop_threads.load()) {
-                break;
-            }
         }
-    });
+    }
 
-    stop_threads.store(true);
     client.stop();
-
     return 0;
 }

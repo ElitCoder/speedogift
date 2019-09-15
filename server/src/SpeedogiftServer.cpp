@@ -1,4 +1,5 @@
 #include "ServerProcessor.h"
+#include "API.h"
 
 #include <ncnet/Server.h>
 #include <spdlog/spdlog.h>

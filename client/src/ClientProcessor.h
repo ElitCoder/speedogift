@@ -1,14 +1,22 @@
 #pragma once
 
 #include "Processor.h"
+#include "Boilerplate.h"
 
-#define SET_GET_MACRO(var, type)    void set_##var(type var) { var##_ = var; }  \
-                                    type get_##var() const { return var##_; }
+#include <cxxopts.hpp>
+#include <ncnet/Client.h>
+
+class API;
 
 class ClientProcessor : public Processor {
 public:
+    ClientProcessor(Client &client) : client_(client) {}
     SET_GET_MACRO(direct_port, int)
+    void process_options(cxxopts::ParseResult &options);
 
 private:
+    void wait_for_api(API &api);
+
+    Client &client_;
     int direct_port_;
 };

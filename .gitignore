@@ -38,3 +38,6 @@ speedogift-server
 
 # Dependencies
 dep/*
+
+# Build directory
+build/*

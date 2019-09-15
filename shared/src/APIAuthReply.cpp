@@ -1,14 +1,6 @@
 #include "APIAuthReply.h"
 #include "Processor.h"
 
-void APIAuthReply::set_allowed(bool allowed) {
-    allowed_ = allowed;
-}
-
-bool APIAuthReply::get_allowed() const {
-    return allowed_;
-}
-
 void APIAuthReply::load(Packet &packet) {
     allowed_ = packet.getBool();
 }

@@ -1,11 +1,12 @@
 #pragma once
 
 #include "API.h"
+#include "Boilerplate.h"
 
 class APIAuthReply : public API {
 public:
-    void set_allowed(bool allowed);
-    bool get_allowed() const;
+    APIAuthReply() { header_ = HEADER_AUTH_REPLY; }
+    SET_GET_MACRO(allowed, bool)
 
 private:
     virtual void load(Packet &packet) override;

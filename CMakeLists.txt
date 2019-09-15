@@ -6,10 +6,10 @@ project(speedogift CXX)
 
 # Sources
 set(CLIENT_SRCS
-        client/src/SpeedogiftClient.cpp)
+        client/src/SpeedogiftClient.cpp
+        client/src/ClientProcessor.cpp)
 
 set(SERVER_SRCS
-        server/src/Client.cpp
         server/src/ServerProcessor.cpp
         server/src/SpeedogiftServer.cpp)
 

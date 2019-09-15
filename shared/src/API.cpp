@@ -3,7 +3,7 @@
 #include "APIAuthReply.h"
 
 #include <ncnet/Network.h>
-#include <ncnet/Log.h>
+#include <spdlog/spdlog.h>
 
 using namespace std;
 
@@ -17,7 +17,7 @@ void API::send(Network &network, size_t peer) {
     network.send(packet_, peer);
 }
 
-bool API::make_and_process(Information &info, Processor &proc) {
+shared_ptr<API> API::make(Information &info) {
     shared_ptr<API> api = nullptr;
     auto &packet = info.getPacket();
     auto header = packet.getHeader();
@@ -30,10 +30,22 @@ bool API::make_and_process(Information &info, Processor &proc) {
     }
 
     if (api == nullptr) {
-        Log(WARNING) << "Unknown API " << header << " received\n";
-        return false;
+        spdlog::warn("Unknown API header 0x{0:b}", header);
+        return nullptr;
     }
 
     api->load(packet);
+    return api;
+}
+
+bool API::process(Information &info, Processor &proc, shared_ptr<API> api) {
     return api->process(info, proc);
+}
+
+bool API::make_and_process(Information &info, Processor &proc) {
+    return process(info, proc, make(info));
+}
+
+bool API::is_api(API &api) {
+    return api.header_ == header_;
 }
