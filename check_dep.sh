@@ -5,16 +5,15 @@ function pull {
     git clone --depth=1 https://github.com/$i
     repo_name=(${i//// })
     cd ${repo_name[1]}
-    if [ ! -f build.sh ]; then
-        echo "No build.sh script found, trying CMake instead..."
-        mkdir build
-        cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja ..
+    if [ -f CMakeLists.txt ]; then
+        echo "Using CMake for building"
+        mkdir -p build && cd build
+        cmake -G Ninja ..
         ninja
         sudo ninja install
     else
-        ./build.sh
-        sudo make install
+        echo "Don't know how to build ${repo_name[1]}!"
+        return 1
     fi
     return $?
 }
