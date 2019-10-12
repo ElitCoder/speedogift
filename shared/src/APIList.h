@@ -8,7 +8,7 @@ public:
     APIList() { header_ = HEADER_LIST; }
 
 private:
-    virtual void load(Packet &packet) override { (void)packet; };
-    virtual bool process(Information &info, Processor &proc) override { return proc.handle_api_list(info, *this); };
+    virtual void load(ncnet::Packet &packet) override { (void)packet; };
+    virtual bool process(ncnet::Transfer &info, Processor &proc) override { return proc.handle_api_list(info, *this); };
     virtual void finish() override {};
 };

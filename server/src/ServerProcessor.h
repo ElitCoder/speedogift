@@ -11,14 +11,14 @@ using Clients = std::vector<Client>;
 
 class ServerProcessor : public Processor {
 public:
-    ServerProcessor(Server &server) : server_(server) {}
+    ServerProcessor(ncnet::Server &server) : server_(server) {}
 
-    virtual bool handle_api_auth(Information &info, const APIAuth &api) override;
-    virtual bool handle_api_list(Information &info, const APIList &api) override;
+    virtual bool handle_api_auth(ncnet::Transfer &info, const APIAuth &api) override;
+    virtual bool handle_api_list(ncnet::Transfer &info, const APIList &api) override;
 
 private:
     bool client_is_valid(const APIAuth &api);
 
-    Server &server_;
+    ncnet::Server &server_;
     Clients clients_;
 };

@@ -5,6 +5,7 @@
 #include <ncnet/Client.h>
 #include <ncnet/Server.h>
 
+using namespace ncnet;
 using namespace std;
 
 int main(int argc, char **argv) {
@@ -62,7 +63,7 @@ int main(int argc, char **argv) {
         // Continue unless no-monitor is set
         if (result.count("no-monitor") == 0) {
             while (true) {
-                auto info = client.get();
+                auto info = client.get_packet();
             }
         }
     } catch (...) {

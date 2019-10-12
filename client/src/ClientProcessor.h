@@ -10,7 +10,7 @@ class API;
 
 class ClientProcessor : public Processor {
 public:
-    ClientProcessor(Client &client) : client_(client) {}
+    ClientProcessor(ncnet::Client &client) : client_(client) {}
     SET_GET_MACRO(direct_port, int)
     bool process_options(cxxopts::ParseResult &options);
 
@@ -19,6 +19,6 @@ public:
     virtual bool handle_api_list_reply(const APIListReply &reply) override;
 
 private:
-    Client &client_;
+    ncnet::Client &client_;
     int direct_port_;
 };

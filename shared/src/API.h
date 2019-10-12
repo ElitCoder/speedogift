@@ -1,11 +1,10 @@
 #pragma once
 
+#include <ncnet/Network.h>
+#include <ncnet/Transfer.h>
 #include <ncnet/Packet.h>
 
-class Network;
 class Processor;
-class Information;
-
 class API;
 
 using PeerAPIPair = std::pair<size_t, std::shared_ptr<API>>;
@@ -39,27 +38,27 @@ const std::string API_VERSION = "0.0.1";
 
 class API {
 public:
-    virtual void send(Network &network, size_t peer = 0) final;
-    virtual PeerAPIPair wait_for_reply(Network &network, Processor &proc, API &type, size_t peer = 0) final;
+    virtual void send(ncnet::Network &network, size_t peer = 0) final;
+    virtual PeerAPIPair wait_for_reply(ncnet::Network &network, Processor &proc, API &type, size_t peer = 0) final;
     // Send + wait + process
-    virtual bool send_and_process_reply(Network &network, Processor &proc, API &type, size_t peer = 0) final;
+    virtual bool send_and_process_reply(ncnet::Network &network, Processor &proc, API &type, size_t peer = 0) final;
 
     // API factory from packet
-    static std::shared_ptr<API> make(Information &info);
-    static bool process_api(Information &info, Processor &proc, std::shared_ptr<API> api);
-    static bool make_and_process(Information &info, Processor &proc);
+    static std::shared_ptr<API> make(ncnet::Transfer &info);
+    static bool process_api(ncnet::Transfer &info, Processor &proc, std::shared_ptr<API> api);
+    static bool make_and_process(ncnet::Transfer &info, Processor &proc);
 
     // API is of type
     virtual bool is_api(API &api) final;
 
 protected:
-    Packet packet_; // Final packet
+    ncnet::Packet packet_; // Final packet
     bool finished_ = false; // If the API has been packed before sending
     int header_ = -1; // enum Header
 
 private:
     // Force implement by sub-classes
-    virtual void load(Packet &packet) = 0; // Load into API form
-    virtual bool process(Information &info, Processor &proc) = 0; // Call corresponding API processor
+    virtual void load(ncnet::Packet &packet) = 0; // Load into API form
+    virtual bool process(ncnet::Transfer &info, Processor &proc) = 0; // Call corresponding API processor
     virtual void finish() = 0; // Called automatically before sending
 };

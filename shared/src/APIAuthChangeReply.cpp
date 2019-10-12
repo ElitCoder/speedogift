@@ -1,15 +1,19 @@
 #include "APIAuthChangeReply.h"
 
+using namespace ncnet;
+
 void APIAuthChangeReply::load(Packet &packet) {
-    allowed_ = packet.getBool();
+    packet >> allowed_;
     if (!allowed_) {
-        error_ = static_cast<ErrorCode>(packet.getInt());
+        int error;
+        packet >> error;
+        error_ = (ErrorCode)error;
     }
 }
 
 void APIAuthChangeReply::finish() {
-    packet_.addBool(allowed_);
+    packet_ << allowed_;
     if (!allowed_) {
-        packet_.addInt(error_);
+        packet_ << (int)error_;
     }
 }

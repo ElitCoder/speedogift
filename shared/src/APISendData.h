@@ -12,8 +12,8 @@ public:
     SET_GET_MACRO(data, std::shared_ptr<unsigned char*>)
 
 private:
-    virtual void load(Packet &packet) override;
-    virtual bool process(Information &info, Processor &proc) override { return proc.handle_api_send_data(info, *this); }
+    virtual void load(ncnet::Packet &packet) override;
+    virtual bool process(ncnet::Transfer &info, Processor &proc) override { return proc.handle_api_send_data(info, *this); }
     virtual void finish() override;
 
     std::string path_;

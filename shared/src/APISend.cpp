@@ -1,25 +1,24 @@
 #include "APISend.h"
 
+using namespace ncnet;
+
 void APISend::load(Packet &packet) {
-    to_name_ = packet.getString();
-    auto size = packet.getInt();
-    for (int i = 0; i < size; i++) {
+    packet >> to_name_;
+    size_t size;
+    packet >> size;
+    for (size_t i = 0; i < size; i++) {
         Send file;
-        file.path = packet.getString();
-        file.name = packet.getString();
-        file.size = packet.getInt();
-        file.hash = packet.getString();
+        packet >> file.path;
+        packet >> file.name;
+        packet >> file.size;
+        packet >> file.hash;
         add_file(file);
     }
 }
 
 void APISend::finish() {
-    packet_.addString(to_name_);
-    packet_.addInt(files_.size());
+    packet_ << to_name_ << files_.size();
     for (auto &file : files_) {
-        packet_.addString(file.path);
-        packet_.addString(file.name);
-        packet_.addInt(file.size);
-        packet_.addString(file.hash);
+        packet_ << file.path << file.name << file.size << file.hash;
     }
 }

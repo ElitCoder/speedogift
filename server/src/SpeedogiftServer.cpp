@@ -4,6 +4,8 @@
 #include <ncnet/Server.h>
 #include <spdlog/spdlog.h>
 
+using namespace ncnet;
+
 int main() {
     Server server;
     if (!server.start("", 12001)) {
@@ -14,7 +16,7 @@ int main() {
     // Enter waiting loop
     ServerProcessor processor(server);
     while (true) {
-        auto info = server.get();
+        auto info = server.get_packet();
         // Process data
         // Disconnect if processing returns false
         auto disconnect = !API::make_and_process(info, processor);

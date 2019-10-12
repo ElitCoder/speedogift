@@ -17,8 +17,8 @@ public:
     const std::vector<ListReply>& get_replies() const { return replies_; }
 
 private:
-    virtual void load(Packet &packet) override;
-    virtual bool process(Information &info, Processor &proc) override { (void)info; return proc.handle_api_list_reply(*this); }
+    virtual void load(ncnet::Packet &packet) override;
+    virtual bool process(ncnet::Transfer &info, Processor &proc) override { (void)info; return proc.handle_api_list_reply(*this); }
     virtual void finish() override;
 
     std::vector<ListReply> replies_;

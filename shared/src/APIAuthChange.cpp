@@ -1,9 +1,13 @@
 #include "APIAuthChange.h"
 
+using namespace ncnet;
+
 void APIAuthChange::load(Packet &packet) {
-    mode_ = static_cast<ClientMode>(packet.getInt());
+    int mode;
+    packet >> mode;
+    mode_ = (ClientMode)mode;
 }
 
 void APIAuthChange::finish() {
-    packet_.addInt(mode_);
+    packet_ << (int)mode_;
 }

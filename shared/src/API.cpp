@@ -13,29 +13,29 @@
 #include <ncnet/Network.h>
 #include <spdlog/spdlog.h>
 
+using namespace ncnet;
 using namespace std;
 
 void API::send(Network &network, size_t peer) {
     if (!finished_) {
         // Add header
-        packet_.addHeader(header_);
+        packet_.add_byte(header_);
         finish(); // Pack API call
-        packet_.finalize(); // Pack data into buffers
         finished_ = true;
     }
 
-    network.send(packet_, peer);
+    network.send_packet(packet_, peer);
 }
 
 // This will probably only be a client function
 PeerAPIPair API::wait_for_reply(Network &network, Processor &proc, API &type, size_t peer) {
     // Wait forever for response
     while (true) {
-        auto info = network.get();
+        auto info = network.get_packet();
         auto api = make(info);
-        if (api->is_api(type) && info.getId() == peer) {
+        if (api->is_api(type) && info.get_connection_id() == peer) {
             // Replied
-            return { info.getId(), api };
+            return { info.get_connection_id(), api };
         } else {
             api->process(info, proc);
         }
@@ -46,15 +46,15 @@ bool API::send_and_process_reply(Network &network, Processor &proc, API &reply, 
     send(network, peer);
     auto peer_reply = wait_for_reply(network, proc, reply, peer);
     auto api_ref = peer_reply.second;
-    Information info;
-    info.setId(peer_reply.first);
+    Transfer info;
+    info.set_connection_id(peer_reply.first);
     return api_ref->process(info, proc);
 }
 
-shared_ptr<API> API::make(Information &info) {
+shared_ptr<API> API::make(Transfer &info) {
     shared_ptr<API> api = nullptr;
-    auto &packet = info.getPacket();
-    auto header = packet.getHeader();
+    auto &packet = info.get_packet();
+    auto header = packet.read_byte();
 
     switch (header) {
         case HEADER_AUTH: api = make_shared<APIAuth>();
@@ -88,7 +88,7 @@ shared_ptr<API> API::make(Information &info) {
     return api;
 }
 
-bool API::process_api(Information &info, Processor &proc, shared_ptr<API> api) {
+bool API::process_api(Transfer &info, Processor &proc, shared_ptr<API> api) {
     if (api == nullptr) {
         // Probably unknown API header, disconnect client
         return false;
@@ -97,7 +97,7 @@ bool API::process_api(Information &info, Processor &proc, shared_ptr<API> api) {
     return api->process(info, proc);
 }
 
-bool API::make_and_process(Information &info, Processor &proc) {
+bool API::make_and_process(Transfer &info, Processor &proc) {
     return process_api(info, proc, make(info));
 }
 

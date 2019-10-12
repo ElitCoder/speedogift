@@ -1,21 +1,22 @@
 #include "APIListReply.h"
 
+using namespace ncnet;
+
 void APIListReply::load(Packet &packet) {
-    auto size = packet.getInt();
-    for (int i = 0; i < size; i++) {
+    size_t size;
+    packet >> size;
+    for (size_t i = 0; i < size; i++) {
         ListReply reply;
-        reply.api_version = packet.getString();
-        reply.name = packet.getString();
-        reply.idle = packet.getBool();
+        packet >> reply.api_version;
+        packet >> reply.name;
+        packet >> reply.idle;
         add_reply(reply);
     }
 }
 
 void APIListReply::finish() {
-    packet_.addInt(replies_.size());
+    packet_ << replies_.size();
     for (auto& reply : replies_) {
-        packet_.addString(reply.api_version);
-        packet_.addString(reply.name);
-        packet_.addBool(reply.idle);
+        packet_ << reply.api_version << reply.name << reply.idle;
     }
 }

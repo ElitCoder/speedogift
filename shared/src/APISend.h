@@ -17,8 +17,8 @@ public:
     const std::vector<Send> &get_files() const { return files_; }
 
 private:
-    virtual void load(Packet &packet) override;
-    virtual bool process(Information &info, Processor &proc) override { return proc.handle_api_send(info, *this); }
+    virtual void load(ncnet::Packet &packet) override;
+    virtual bool process(ncnet::Transfer &info, Processor &proc) override { return proc.handle_api_send(info, *this); }
     virtual void finish() override;
 
     std::string to_name_;

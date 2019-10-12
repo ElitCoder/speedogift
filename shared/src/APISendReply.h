@@ -13,8 +13,8 @@ public:
     const std::vector<std::string> &get_ips() const { return ips_; }
 
 private:
-    virtual void load(Packet &packet) override;
-    virtual bool process(Information &info, Processor &proc) override { (void)info; return proc.handle_api_send_reply(*this); }
+    virtual void load(ncnet::Packet &packet) override;
+    virtual bool process(ncnet::Transfer &info, Processor &proc) override { (void)info; return proc.handle_api_send_reply(*this); }
     virtual void finish() override;
 
     bool allowed_;

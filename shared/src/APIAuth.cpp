@@ -1,14 +1,13 @@
 #include "APIAuth.h"
 #include "Processor.h"
 
-using namespace std;
+using namespace ncnet;
 
 void APIAuth::load(Packet &packet) {
-    api_version_ = packet.getString();
-    name_ = packet.getString();
+    packet >> api_version_;
+    packet >> name_;
 }
 
 void APIAuth::finish() {
-    packet_.addString(API_VERSION);
-    packet_.addString(name_);
+    packet_ << API_VERSION << name_;
 }

@@ -1,25 +1,19 @@
 #include "APISendReply.h"
 
+using namespace ncnet;
+
 void APISendReply::load(Packet &packet) {
-    allowed_ = packet.getBool();
+    packet >> allowed_;
     if (!allowed_) {
-        error_ = static_cast<ErrorCode>(packet.getInt());
-        return;
-    }
-    auto size = packet.getInt();
-    for (int i = 0; i < size; i++) {
-        ips_.push_back(packet.getString());
+        int error;
+        packet >> error;
+        error_ = (ErrorCode)error;
     }
 }
 
 void APISendReply::finish() {
-    packet_.addBool(allowed_);
+    packet_ << allowed_;
     if (!allowed_) {
-        packet_.addInt(error_);
-        return;
-    }
-    packet_.addInt(ips_.size());
-    for (auto &ip : ips_) {
-        packet_.addString(ip);
+        packet_ << (int)error_;
     }
 }
