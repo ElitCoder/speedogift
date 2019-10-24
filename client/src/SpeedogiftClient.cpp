@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     // Options
     Client client;
     string hostname = "localhost";
-    int port = 12000;
+    int port = 12001;
 
     try {
         auto result = options.parse(argc, argv);
