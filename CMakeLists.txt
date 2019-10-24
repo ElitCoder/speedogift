@@ -36,8 +36,6 @@ if(NOT TARGET spdlog)
     find_package(spdlog REQUIRED)
 endif()
 
-find_package(Threads REQUIRED)
-
 # Executable
 add_executable(speedogift_client ${SHARED_SRCS} ${CLIENT_SRCS})
 add_executable(speedogift_server ${SHARED_SRCS} ${SERVER_SRCS})
@@ -49,7 +47,9 @@ target_include_directories(speedogift_server PRIVATE shared/src)
 # Linking
 target_link_libraries(speedogift_client PRIVATE spdlog::spdlog)
 target_link_libraries(speedogift_client PRIVATE ncnet)
+target_link_libraries(speedogift_client PRIVATE cryptopp)
 target_link_libraries(speedogift_client PRIVATE Threads::Threads)
 target_link_libraries(speedogift_server PRIVATE spdlog::spdlog)
 target_link_libraries(speedogift_server PRIVATE ncnet)
+target_link_libraries(speedogift_server PRIVATE cryptopp)
 target_link_libraries(speedogift_server PRIVATE Threads::Threads)
