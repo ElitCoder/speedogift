@@ -94,10 +94,14 @@ int main(int argc, char **argv) {
 
     // Continue unless no-monitor is set
     if (!no_monitor) {
-        while (true) {
-            auto info = client.get_packet();
-            // TODO: Do something smart
-        }
+        // Change active mode to inactive
+        actions.set_active(false);
+        // Loop requests
+        client.run_transfer_loop([&actions] (auto &transfer) {
+            actions.process_request(transfer);
+        });
+        // Lost connection
+        spdlog::error("Connection to server lost, exiting");
     }
 
     // Quit

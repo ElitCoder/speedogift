@@ -50,10 +50,10 @@ API APIFactory::list_reply(const vector<APIFactory::ListReply> &clients) {
     return create_api_wrapper(packet, API_HEADER_NONE);
 }
 
-API APIFactory::send(const string &name, const vector<APIFactory::Send> &files) {
+API APIFactory::send(const string &from, const string &to, const vector<APIFactory::Send> &files) {
     Packet packet;
     packet.add_byte(API_HEADER_SEND);
-    packet << name;
+    packet << from << to;
     packet << files.size();
     for (auto &file : files) {
         packet << file.path << file.size << file.hash;
@@ -61,6 +61,20 @@ API APIFactory::send(const string &name, const vector<APIFactory::Send> &files) 
     return create_api_wrapper(packet, API_HEADER_SEND_REPLY);
 }
 
-API APIFactory::send_reply(APIStatusCode code) {
-    return create_generic_reply(API_HEADER_SEND_REPLY, code);
+API APIFactory::send_reply(const string &from, const string &to, APIStatusCode code) {
+    Packet packet;
+    packet.add_byte(API_HEADER_SEND_REPLY);
+    packet << from << to << code;
+    return create_api_wrapper(packet, API_HEADER_NONE);
+}
+
+API APIFactory::change_active(bool active) {
+    Packet packet;
+    packet.add_byte(API_HEADER_CHANGE_ACTIVE);
+    packet << active;
+    return create_api_wrapper(packet, API_HEADER_CHANGE_ACTIVE_REPLY);
+}
+
+API APIFactory::change_active_reply(APIStatusCode code) {
+    return create_generic_reply(API_HEADER_CHANGE_ACTIVE_REPLY, code);
 }

@@ -12,10 +12,21 @@ public:
     void remove_client(size_t id);
 
 private:
-    void handle_api_auth(ncnet::Transfer &transfer);
-    void handle_api_list(ncnet::Transfer &transfer);
-    void handle_api_send(ncnet::Transfer &transfer);
+    void add_client(size_t id, const std::string &name, const std::string &version);
+    Client *get_client(const std::string &name);
+    Client *get_client_id(size_t id);
+
+    void handle_api_auth();
+    void handle_api_list();
+    void handle_api_send();
+    void handle_api_send_reply();
+    void handle_api_change_active();
 
     ncnet::Server &server_;
     std::vector<Client> clients_;
+
+    // Current request being processed
+    ncnet::Packet *current_packet_original_;
+    ncnet::Packet current_packet_;
+    size_t current_id_;
 };

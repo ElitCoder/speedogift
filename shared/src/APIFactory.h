@@ -20,6 +20,8 @@ public:
     static API auth_reply(APIStatusCode code);
     static API list();
     static API list_reply(const std::vector<ListReply> &clients);
-    static API send(const std::string &name, const std::vector<Send> &files);
-    static API send_reply(APIStatusCode code);
+    static API send(const std::string &from, const std::string &to, const std::vector<Send> &files);
+    static API send_reply(const std::string &from, const std::string &to, APIStatusCode code);
+    static API change_active(bool active);
+    static API change_active_reply(APIStatusCode code);
 };
