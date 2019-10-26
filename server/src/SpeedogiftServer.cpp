@@ -1,31 +1,33 @@
-#include "ServerProcessor.h"
-#include "API.h"
+#include "ServerActions.h"
 
 #include <ncnet/Server.h>
-#include <spdlog/spdlog.h>
 
-using namespace ncnet;
+#include "spdlog/spdlog.h"
 
 int main() {
-    Server server;
-    if (!server.start("", 12001)) {
+    ncnet::Server server;
+    auto port = 12001;
+    if (!server.start("", port)) {
         spdlog::error("Failed to start server, exiting");
         return -1;
     }
 
+    // Set debug level during development
+    spdlog::set_level(spdlog::level::debug);
+
+    // Main server context
+    ServerActions actions(server);
+
+    // Register disconnecting function
+    server.set_disconnect_callback([&actions] (auto id) {
+        actions.remove_client(id);
+    });
+
     // Enter waiting loop
-    ServerProcessor processor(server);
-    while (true) {
-        auto info = server.get_packet();
-        // Process data
-        // Disconnect if processing returns false
-        auto disconnect = !API::make_and_process(info, processor);
-        if (disconnect) {
-            // TODO: Remove client
-        }
-    }
+    server.run_transfer_loop([&actions] (auto &transfer) {
+        actions.process_request(transfer);
+    });
 
     // Probably won't get here
     server.stop();
-    return 0;
 }

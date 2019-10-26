@@ -1,4 +1,4 @@
-DEPS='jarro2783/cxxopts gabime/spdlog ElitCoder/ncnet'
+DEPS='ElitCoder/ncnet'
 
 reset_dep() {
     echo Resetting dependency $1
@@ -26,21 +26,22 @@ check_dep() {
     cd $repo
     # Update git information
     echo Fetching new git information
-    git fetch || { echo Failed to download git information, skipping; return 1; }
+    git fetch || { echo Failed to download git information, skipping; cd ..; return 1; }
     # Check HEAD vs origin
     local head;
     head=$(git rev-parse HEAD)
     local origin;
     origin=$(git rev-parse @{u})
-    [ $head = $origin ] || { echo HEAD is not at the same point as remote, resetting; return 1; }
+    [ $head = $origin ] || { echo HEAD is not at the same point as remote, resetting; cd ..; return 1; }
     echo Dependency $1 is updated, continuing
 }
 
 CURRENT=$(pwd)
-[ -d dep ] || echo Creating \'dep\' directory; mkdir -p dep
+EXTERNAL_DIRECTORY=$CURRENT/dep/external
+mkdir -p $EXTERNAL_DIRECTORY
 
 for dep in $DEPS; do
-    cd $CURRENT/dep
+    cd $EXTERNAL_DIRECTORY
     # Check git information
     check_dep $dep && continue
     # Reset

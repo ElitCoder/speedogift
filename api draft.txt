@@ -25,7 +25,6 @@ Send
 	Name
 	Number of files with metadata
 		Path
-		Name
 		Size
 		MD5/other hash
 
