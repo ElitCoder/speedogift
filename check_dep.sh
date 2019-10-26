@@ -11,7 +11,7 @@ reset_dep() {
     [ -f CMakeLists.txt ] || { echo Only CMake is supported for now, skipping; return 1; }
     # Build using CMake
     mkdir -p build && cd build
-    cmake -G Ninja .. || { echo Failed to configure CMake, skipping; return 1; }
+    cmake -DCMAKE_BUILD_TYPE=Release -G Ninja .. || { echo Failed to configure CMake, skipping; return 1; }
     ninja || { echo Failed to build, skipping; return 1; }
     sudo ninja install || { echo Failed to install, skipping; return 1; }
 }

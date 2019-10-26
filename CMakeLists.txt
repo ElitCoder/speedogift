@@ -20,7 +20,6 @@ set(SHARED_SRCS
 # Compiler options
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_compile_options(-Wall -Wextra -pedantic)
 
 # Executable
 add_executable(speedogift_client ${SHARED_SRCS} ${CLIENT_SRCS})
